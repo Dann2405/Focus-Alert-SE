@@ -16,9 +16,10 @@
 #include "hardware/uart.h"
 #include "hardware/adc.h"
 #include "hardware/pwm.h"
-#include "build/ws2812b.pio.h"
 
 // cabeçalho config.h com as definições do projeto
 #include "include/config.h"
+
+#include "build/ws2818b.pio.h"
 
 #endif // BIBLIOTECAS_H
