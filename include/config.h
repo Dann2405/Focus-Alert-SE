@@ -26,7 +26,7 @@ const uint VRY_PIN = 26;
 const uint SW_PIN = 22;
 
 // inicialização dos pinos leds
-void init_leds()
+void leds_init()
 {
     // inicializa os pinos dos LEDs
     gpio_init(LED_RED);
@@ -40,7 +40,7 @@ void init_leds()
 }
 
 // inicialização dos pinos dos botões
-void init_buttons()
+void buttons_init()
 {
     // inicializa os pinos dos botões
     gpio_init(BUTTON_A);
@@ -53,6 +53,18 @@ void init_buttons()
     // define os pinos como pull-up
     gpio_pull_up(BUTTON_A);
     gpio_pull_up(BUTTON_B);
+}
+
+// inicialização dos pinos do buzzer
+void buzzer_init()
+{
+    // inicializa os pinos dos buzzers
+    gpio_init(Buzzer_A);
+    gpio_init(Buzzer_B);
+
+    // define os pinos como saida
+    gpio_set_dir(Buzzer_A, GPIO_OUT);
+    gpio_set_dir(Buzzer_B, GPIO_OUT);
 }
 
 #endif // CONFIG_H
