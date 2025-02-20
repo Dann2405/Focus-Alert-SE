@@ -25,6 +25,7 @@ const uint VRX_PIN = 27;
 const uint VRY_PIN = 26;
 const uint SW_PIN = 22;
 
+// inicialização dos pinos leds
 void init_leds()
 {
     // inicializa os pinos dos LEDs
@@ -36,6 +37,22 @@ void init_leds()
     gpio_set_dir(LED_RED, GPIO_OUT);
     gpio_set_dir(LED_GREEN, GPIO_OUT);
     gpio_set_dir(LED_BLUE, GPIO_OUT);
+}
+
+// inicialização dos pinos dos botões
+void init_buttons()
+{
+    // inicializa os pinos dos botões
+    gpio_init(BUTTON_A);
+    gpio_init(BUTTON_B);
+
+    // define os pinos como entrada
+    gpio_set_dir(BUTTON_A, GPIO_IN);
+    gpio_set_dir(BUTTON_B, GPIO_IN);
+
+    // define os pinos como pull-up
+    gpio_pull_up(BUTTON_A);
+    gpio_pull_up(BUTTON_B);
 }
 
 #endif // CONFIG_H
