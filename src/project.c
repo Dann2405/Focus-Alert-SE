@@ -1,4 +1,3 @@
-#include "include/lib/bibliotecas.h"
 #include "interface.c"
 
 int main()

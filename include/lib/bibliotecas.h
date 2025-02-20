@@ -14,6 +14,8 @@
 #include "hardware/watchdog.h"
 #include "hardware/clocks.h"
 #include "hardware/uart.h"
+#include "hardware/adc.h"
+#include "hardware/pwm.h"
 
 // cabeçalho config.h com as definições do projeto
 #include "include/config.h"
