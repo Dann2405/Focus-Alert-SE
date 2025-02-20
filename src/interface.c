@@ -7,7 +7,6 @@ ssd1306_t ssd; // Estrutura do display
 
 static bool cor = true;
 
-
 // Inicializa o display SSD1306
 void displayssd1306_init()
 {
