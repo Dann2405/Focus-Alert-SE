@@ -2,7 +2,6 @@
 #define CONFIG_H
 
 // Configurações e definições do projeto (pinos, tempos, limites, etc.)
-#include "include/lib/bibliotecas.h"
 
 // definição dos pinos do LED RGB
 const uint LED_RED = 13;

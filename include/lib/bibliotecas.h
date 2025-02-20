@@ -15,4 +15,7 @@
 #include "hardware/clocks.h"
 #include "hardware/uart.h"
 
+// cabeçalho config.h com as definições do projeto
+#include "include/config.h"
+
 #endif // BIBLIOTECAS_H
