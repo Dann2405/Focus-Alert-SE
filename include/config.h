@@ -66,4 +66,18 @@ void buzzer_init()
     gpio_set_dir(Buzzer_B, GPIO_OUT);
 }
 
+// inicialização do joystick
+static inline void joystick_init()
+{
+    // inicializa os pinos do joystick como adc
+    adc_gpio_init(VRX_PIN);
+    adc_gpio_init(VRY_PIN);
+
+    // inicializa o pino do botão do joystick
+    gpio_init(SW_PIN);
+    gpio_set_dir(SW_PIN, GPIO_IN);
+    gpio_pull_up(SW_PIN);
+
+}
+
 #endif // CONFIG_H
