@@ -2,6 +2,7 @@
 #define CONFIG_H
 
 // Configurações e definições do projeto (pinos, tempos, limites, etc.)
+#include "include/lib/bibliotecas.h"
 
 // definição dos pinos do LED RGB
 const uint LED_RED = 13;
@@ -24,5 +25,17 @@ const uint VRX_PIN = 27;
 const uint VRY_PIN = 26;
 const uint SW_PIN = 22;
 
+void init_leds()
+{
+    // inicializa os pinos dos LEDs
+    gpio_init(LED_RED);
+    gpio_init(LED_GREEN);
+    gpio_init(LED_BLUE);
+
+    // define os pinos como saida
+    gpio_set_dir(LED_RED, GPIO_OUT);
+    gpio_set_dir(LED_GREEN, GPIO_OUT);
+    gpio_set_dir(LED_BLUE, GPIO_OUT);
+}
 
 #endif // CONFIG_H
