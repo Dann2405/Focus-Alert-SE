@@ -4,13 +4,13 @@ int main()
 {
     stdio_init_all();
 
+    // inicializa os componentes de hardware
     leds_init();
     buttons_init();
     buzzer_init();
+    joystick_init();
 
-
-
-
+    // inicializa o display
     displayssd1306_init();
     
     
