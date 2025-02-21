@@ -32,7 +32,27 @@ void alarm_reset();
 bool alarm_is_active();
 uint32_t alarm_get_tempo_restante();
 void alarm_update();
-void alarm_activade();
+void alarm_activate();
+
+// função de manipulação de estados
+void state_idle_enter();
+void state_idle_update();
+void state_idle_exit();
+
+void state_program_enter();
+void state_program_update();
+void state_program_exit();
+
+void state_countdown_enter();
+void state_countdown_update();
+void state_countdown_exit();
+
+void state_alarm_enter();
+void state_alarm_update();
+void state_alarm_exit();
+
+// função de transição de estado
+void change_state(Alarmstate new_state);
 
 // Variaveis globais:
 extern Alarmstate current_state;
