@@ -20,6 +20,7 @@
 // cabeçalho config.h com as definições do projeto
 #include "include/config.h"
 
+// cabeçalho para configuração do LED WS2818b
 #include "build/ws2818b.pio.h"
 
 #endif // BIBLIOTECAS_H
