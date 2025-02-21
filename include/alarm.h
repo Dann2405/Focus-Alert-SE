@@ -23,8 +23,19 @@ typedef struct
     bool active; // indica se o alarme esta ativo
 } Alarmconfig;
 
+// Prototipos das funções
+void alarm_init();
+void alarm_set_time(uint16_t hours, uint16_t minutes, uint16_t seconds);
+void alarm_start();
+void alarm_stop();
+void alarm_reset();
+bool alarm_is_active();
+uint32_t alarm_get_tempo_restante();
+void alarm_update();
+void alarm_activade();
 
-
-
+// Variaveis globais:
+extern Alarmstate current_state;
+extern Alarmconfig alarm;
 
 #endif
