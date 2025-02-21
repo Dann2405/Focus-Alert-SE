@@ -175,7 +175,7 @@ void state_program_update()
     static bool joystick_triggered = false; // indica se o ajuste já foi disparado
 
     // definição da zona morta com histerese
-    const uint16_t DEADZONE_LOW = 1900;   // pode sofrer ajustes conforme necessário futuramente
+    const uint16_t DEADZONE_LOW = 1900; // pode sofrer ajustes conforme necessário futuramente
     const uint16_t DEADZONE_HIGH = 2100;
 
     if (absolute_time_diff_us(last_update, get_absolute_time()) < 100000)
@@ -197,12 +197,15 @@ void state_program_update()
     }
 
     // se o joystick estiver centralizado, reseta o disparo
-    if (y_value >= DEADZONE_LOW && y_value <= DEADZONE_HIGH) {
+    if (y_value >= DEADZONE_LOW && y_value <= DEADZONE_HIGH)
+    {
         joystick_triggered = false;
-    } 
-    else if (!joystick_triggered) {
+    }
+    else if (!joystick_triggered)
+    {
         joystick_triggered = true;
-        if (y_value < DEADZONE_LOW) {
+        if (y_value < DEADZONE_LOW)
+        {
             // movimento para cima: decrementa
             switch (selection)
             {
@@ -217,7 +220,8 @@ void state_program_update()
                 break;
             }
         }
-        else if (y_value > DEADZONE_HIGH) {
+        else if (y_value > DEADZONE_HIGH)
+        {
             // movimento para baixo: incrementa
             switch (selection)
             {
@@ -307,14 +311,27 @@ void state_countdown_exit()
 
 void state_alarm_enter()
 {
-    // configura pwm para controlar o buzzer
-    gpio_set_function(Buzzer_A, GPIO_FUNC_PWM);
-    uint slice_num = pwm_gpio_to_slice_num(Buzzer_A);
-    pwm_set_wrap(slice_num, 1000);
-    pwm_set_chan_level(slice_num, PWM_CHAN_A, 500);
-    pwm_set_enabled(slice_num, true);
-
+    // exibe a tela de alarme
     display_show_alarm_screen();
+
+    // configura o pino do buzzer para SIO (saída simples)
+    gpio_set_function(Buzzer_A, GPIO_FUNC_SIO);
+    gpio_put(Buzzer_A, 0); // Certifica que inicia desligado
+
+    // toca o alarme até que o botão A seja pressionado
+    // OBS: Essa abordagem é bloqueante: enquanto o alarme estiver tocando, o loop principal ficará parado.
+    while (gpio_get(BUTTON_A))
+    {
+        // gera uma frequência de aproximadamente 4000 Hz:
+        gpio_put(Buzzer_A, 1);
+        sleep_us(125);
+        gpio_put(Buzzer_A, 0);
+        sleep_us(125);
+    }
+
+    // quando o botão A é pressionado, encerra o alarme
+    alarm_reset();
+    sleep_ms(200); // debounce para evitar múltiplos disparos
 }
 
 void state_alarm_update()
