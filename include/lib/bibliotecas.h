@@ -23,4 +23,7 @@
 // cabeçalho para configuração do LED WS2818b
 #include "build/ws2818b.pio.h"
 
+// cabeçalho alarm.h com as definições do arlam
+#include "include/alarm.h"
+
 #endif // BIBLIOTECAS_H
