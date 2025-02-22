@@ -93,9 +93,9 @@ void display_show_program_screen()
     ssd1306_hline(&ssd, 0, WIDTH - 1, 15, true);
 
     // Mostra os campos para programação
-    ssd1306_draw_string(&ssd, "Horas:", 10, 25);
-    ssd1306_draw_string(&ssd, "Minutos:", 10, 35);
-    ssd1306_draw_string(&ssd, "Segundos:", 10, 45);
+    ssd1306_draw_string(&ssd, "Horas:", 5, 25);
+    ssd1306_draw_string(&ssd, "Minutos:", 5, 35);
+    ssd1306_draw_string(&ssd, "Segundos:", 5, 45);
 
     // Mostra instruções
     ssd1306_draw_string(&ssd, "B INICIAR", 5, 55);
@@ -112,26 +112,68 @@ void display_update_program_values(uint16_t hours, uint16_t minutes, uint16_t se
 {
     char buffer[10];
 
-    // Limpa os valores antigos
-    ssd1306_rect(&ssd, 24, 70, 40, 8, false, true);
-    ssd1306_rect(&ssd, 24, 80, 40, 8, false, true);
-    ssd1306_rect(&ssd, 24, 90, 40, 8, false, true);
+    // Coordenadas para os valores:
+    // Os números são exibidos a partir de x = 70, com:
+    // - Horas: y = 25
+    // - Minutos: y = 25 + 10 = 35
+    // - Segundos: y = 25 + 20 = 45
+    uint8_t value_x = 70;
+    uint8_t base_y = 25;
+    uint8_t line_spacing = 10;
+    uint8_t field_width = 16; // Aproximadamente 2 dígitos * 8px
+    uint8_t field_height = 8; // Altura da fonte
 
-    // Formata e mostra os novos valores
+    // Margens para "abrir" o campo selecionado
+    uint8_t margin_x = 2;
+    uint8_t margin_y = 2;
+
+    // Calcular a região total que cobre os três campos, incluindo as margens:
+    uint8_t region_left = value_x - margin_x;
+    uint8_t region_top = base_y - margin_y;
+    uint8_t region_width = field_width + 2 * margin_x;
+    uint8_t region_height = (3 * line_spacing) + 2 * margin_y; // 3 linhas de texto
+
+    // Limpar toda a região (valores + possíveis destaques)
+    ssd1306_rect(&ssd, region_top, region_left, region_width, region_height, false, true);
+
+    // Desenha os numeros para horas, minutos e segundos
     sprintf(buffer, "%02d", hours);
-    ssd1306_draw_string(&ssd, buffer, 70, 25);
+    ssd1306_draw_string(&ssd, buffer, value_x, base_y); // Horas em (70,25)
 
     sprintf(buffer, "%02d", minutes);
-    ssd1306_draw_string(&ssd, buffer, 70, 35);
+    ssd1306_draw_string(&ssd, buffer, value_x, base_y + line_spacing); // Minutos em (70,35)
 
     sprintf(buffer, "%02d", seconds);
-    ssd1306_draw_string(&ssd, buffer, 70, 45);
+    ssd1306_draw_string(&ssd, buffer, value_x, base_y + 2 * line_spacing); // Segundos em (70,45)
 
-    // Destaca o campo selecionado
-    //uint8_t y_pos = 25 + (selection * 10);
-    //ssd1306_rect(&ssd, 65, y_pos, 20, 10, true, false);
+    // calcula a area do campo selecionado (aplicando as margens)
+    // Sse selection == 0 => horas, 1 => minutos, 2 => segundos
+    uint8_t highlight_top = base_y + (selection * line_spacing) - margin_y;
+    uint8_t highlight_left = value_x - margin_x;
+    uint8_t highlight_width = field_width + 2 * margin_x;
+    uint8_t highlight_height = field_height + 2 * margin_y;
 
-    // Atualiza o display
+    // desenhar o retângulo de destaque (apenas contorno) na região do campo selecionado
+    ssd1306_rect(&ssd, highlight_top, highlight_left, highlight_width, highlight_height, true, false);
+
+    // redesenhar o número do campo selecionado por cima do retângulo para garantir que ele fique legível
+    switch (selection)
+    {
+    case 0:
+        sprintf(buffer, "%02d", hours);
+        ssd1306_draw_string(&ssd, buffer, value_x, base_y);
+        break;
+    case 1:
+        sprintf(buffer, "%02d", minutes);
+        ssd1306_draw_string(&ssd, buffer, value_x, base_y + line_spacing);
+        break;
+    case 2:
+        sprintf(buffer, "%02d", seconds);
+        ssd1306_draw_string(&ssd, buffer, value_x, base_y + 2 * line_spacing);
+        break;
+    }
+
+    // 6. Atualizar o display com o novo buffer
     ssd1306_send_data(&ssd);
 }
 
