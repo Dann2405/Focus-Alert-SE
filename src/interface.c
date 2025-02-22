@@ -92,11 +92,6 @@ void display_show_program_screen()
     // Desenha uma linha horizontal
     ssd1306_hline(&ssd, 0, WIDTH - 1, 15, true);
 
-    // Mostra os campos para programação
-    ssd1306_draw_string(&ssd, "Horas:", 5, 25);
-    ssd1306_draw_string(&ssd, "Minutos:", 5, 35);
-    ssd1306_draw_string(&ssd, "Segundos:", 5, 45);
-
     // Mostra instruções
     ssd1306_draw_string(&ssd, "B: Iniciar", 5, 55);
 
@@ -110,70 +105,74 @@ void display_show_program_screen()
 // Atualiza os valores na tela de programação
 void display_update_program_values(uint16_t hours, uint16_t minutes, uint16_t seconds, uint8_t selection)
 {
-    char buffer[10];
+    // Limpa a área de exibição
+    ssd1306_fill(&ssd, false);
 
-    // Coordenadas para os valores:
-    // Os números são exibidos a partir de x = 70, com:
-    // - Horas: y = 25
-    // - Minutos: y = 25 + 10 = 35
-    // - Segundos: y = 25 + 20 = 45
-    uint8_t value_x = 70;
-    uint8_t base_y = 25;
-    uint8_t line_spacing = 10;
-    uint8_t field_width = 16; // Aproximadamente 2 dígitos * 8px
-    uint8_t field_height = 8; // Altura da fonte
+    // Desenha a borda
+    ssd1306_rect(&ssd, 0, 0, WIDTH, HEIGHT, true, false);
 
-    // Margens para "abrir" o campo selecionado
-    uint8_t margin_x = 2;
-    uint8_t margin_y = 2;
+    // Mostra o título
+    ssd1306_draw_string(&ssd, "A PROGRAMAR", 10, 5);
 
-    // Calcular a região total que cobre os três campos, incluindo as margens:
-    uint8_t region_left = value_x - margin_x;
-    uint8_t region_top = base_y - margin_y;
-    uint8_t region_width = field_width + 2 * margin_x;
-    uint8_t region_height = (3 * line_spacing) + 2 * margin_y; // 3 linhas de texto
+    // Desenha uma linha horizontal
+    ssd1306_hline(&ssd, 0, WIDTH - 1, 15, true);
 
-    // Limpar toda a região (valores + possíveis destaques)
-    ssd1306_rect(&ssd, region_top, region_left, region_width, region_height, false, true);
+    // Coordenadas base ajustadas
+    uint8_t base_x = 28;  // Posição inicial dos elementos
+    uint8_t label_y = 25; // Posição Y dos labels
+    uint8_t time_y = 40;  // Posição Y dos números
 
-    // Desenha os numeros para horas, minutos e segundos
-    sprintf(buffer, "%02d", hours);
-    ssd1306_draw_string(&ssd, buffer, value_x, base_y); // Horas em (70,25)
+    // Desenha os labels com espaçamento ajustado
+    ssd1306_draw_string(&ssd, "H", base_x + 4, label_y);
+    ssd1306_draw_string(&ssd, ":", base_x + 16, label_y);
+    ssd1306_draw_string(&ssd, "MIN", base_x + 24, label_y);
+    ssd1306_draw_string(&ssd, ":", base_x + 48, label_y);
+    ssd1306_draw_string(&ssd, "S", base_x + 56, label_y);
 
-    sprintf(buffer, "%02d", minutes);
-    ssd1306_draw_string(&ssd, buffer, value_x, base_y + line_spacing); // Minutos em (70,35)
+    // Formata o tempo em partes separadas
+    char h_buffer[3], m_buffer[3], s_buffer[3];
+    sprintf(h_buffer, "%02d", hours);
+    sprintf(m_buffer, "%02d", minutes);
+    sprintf(s_buffer, "%02d", seconds);
 
-    sprintf(buffer, "%02d", seconds);
-    ssd1306_draw_string(&ssd, buffer, value_x, base_y + 2 * line_spacing); // Segundos em (70,45)
+    // Desenha os números com espaçamento ajustado
+    ssd1306_draw_string(&ssd, h_buffer, base_x, time_y);
+    ssd1306_draw_string(&ssd, ":", base_x + 16, time_y);
+    ssd1306_draw_string(&ssd, m_buffer, base_x + 28, time_y);
+    ssd1306_draw_string(&ssd, ":", base_x + 48, time_y);
+    ssd1306_draw_string(&ssd, s_buffer, base_x + 56, time_y);
 
-    // calcula a area do campo selecionado (aplicando as margens)
-    // Sse selection == 0 => horas, 1 => minutos, 2 => segundos
-    uint8_t highlight_top = base_y + (selection * line_spacing) - margin_y;
-    uint8_t highlight_left = value_x - margin_x;
-    uint8_t highlight_width = field_width + 2 * margin_x;
-    uint8_t highlight_height = field_height + 2 * margin_y;
+    // Mostra instrução no rodapé
+    ssd1306_draw_string(&ssd, "B:", 5, 55);
+    ssd1306_draw_string(&ssd, "INICIAR", 25, 55);
 
-    // desenhar o retângulo de destaque (apenas contorno) na região do campo selecionado
-    ssd1306_rect(&ssd, highlight_top, highlight_left, highlight_width, highlight_height, true, false);
+    // Dimensões para o retângulo de seleção
+    uint8_t field_width = 20;  // Largura para dois dígitos
+    uint8_t field_height = 14; // Altura do campo
+    uint8_t margin = 3;        // Margem para o retângulo de seleção
 
-    // redesenhar o número do campo selecionado por cima do retângulo para garantir que ele fique legível
-    switch (selection)
+    // Posições X para cada campo numérico (ajustadas para o novo espaçamento)
+    uint8_t field_positions[] = {base_x, base_x + 28, base_x + 56};
+
+    // Desenha o retângulo de seleção apenas se houver um campo selecionado
+    if (selection < 3)
     {
-    case 0:
-        sprintf(buffer, "%02d", hours);
-        ssd1306_draw_string(&ssd, buffer, value_x, base_y);
-        break;
-    case 1:
-        sprintf(buffer, "%02d", minutes);
-        ssd1306_draw_string(&ssd, buffer, value_x, base_y + line_spacing);
-        break;
-    case 2:
-        sprintf(buffer, "%02d", seconds);
-        ssd1306_draw_string(&ssd, buffer, value_x, base_y + 2 * line_spacing);
-        break;
+        uint8_t select_x = field_positions[selection] - margin;
+        uint8_t select_y = time_y - margin;
+
+        // Desenha o retângulo de seleção
+        ssd1306_rect(&ssd, select_y, select_x, field_width, field_height, true, false);
+
+        // Redesenha os números para garantir visibilidade
+        if (selection == 0)
+            ssd1306_draw_string(&ssd, h_buffer, base_x, time_y);
+        if (selection == 1)
+            ssd1306_draw_string(&ssd, m_buffer, base_x + 28, time_y);
+        if (selection == 2)
+            ssd1306_draw_string(&ssd, s_buffer, base_x + 56, time_y);
     }
 
-    // Atualizar o display com o novo buffer
+    // Atualiza o display
     ssd1306_send_data(&ssd);
 }
 
@@ -238,7 +237,6 @@ void display_show_alarm_screen()
 
     // Mostra a mensagem
     ssd1306_draw_string(&ssd, "Botao A: Parar", 10, 35);
-
 
     // Atualiza o display
     ssd1306_send_data(&ssd);

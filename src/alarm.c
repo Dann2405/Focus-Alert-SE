@@ -172,10 +172,11 @@ void state_program_update()
 {
     static uint8_t selection = 0; // 0=horas, 1=minutos, 2=segundos
     static absolute_time_t last_update = {0};
-    static bool joystick_triggered = false; // indica se o ajuste já foi disparado
+    static bool joystick_triggered_y = false;
+    static bool joystick_triggered_x = false;
 
-    // definição da zona morta com histerese
-    const uint16_t DEADZONE_LOW = 1900; // pode sofrer ajustes conforme necessário futuramente
+    // Ddefinição da zona morta com histerese
+    const uint16_t DEADZONE_LOW = 1900;
     const uint16_t DEADZONE_HIGH = 2100;
 
     if (absolute_time_diff_us(last_update, get_absolute_time()) < 100000)
@@ -184,29 +185,45 @@ void state_program_update()
     }
     last_update = get_absolute_time();
 
-    // lê o valor do eixo vertical do joystick (vry)
-    adc_select_input(0); // vry_pin está em adc canal 0
+    // Le os valores dos eixos do joystick
+    adc_select_input(0); // VRY
     uint16_t y_value = adc_read();
 
-    // printf("y value: %d\n", y_value);
+    adc_select_input(1); // VRX
+    uint16_t x_value = adc_read();
 
-    if (!gpio_get(SW_PIN))
+    // Controle de seleção com eixo X
+    if (x_value >= DEADZONE_LOW && x_value <= DEADZONE_HIGH)
     {
-        selection = (selection + 1) % 3;
-        sleep_ms(200); // debounce
+        joystick_triggered_x = false;
+    }
+    else if (!joystick_triggered_x)
+    {
+        joystick_triggered_x = true;
+        if (x_value < DEADZONE_LOW)
+        {
+            // Movimento para esquerda
+            selection = (selection + 2) % 3; // Decrementa com wraparound
+        }
+        else if (x_value > DEADZONE_HIGH)
+        {
+            // Movimento para direita
+            selection = (selection + 1) % 3; // Incrementa com wraparound
+        }
+        sleep_ms(200); // Debounce
     }
 
-    // se o joystick estiver centralizado, reseta o disparo
+    // Controle de valor com eixo Y
     if (y_value >= DEADZONE_LOW && y_value <= DEADZONE_HIGH)
     {
-        joystick_triggered = false;
+        joystick_triggered_y = false;
     }
-    else if (!joystick_triggered)
+    else if (!joystick_triggered_y)
     {
-        joystick_triggered = true;
+        joystick_triggered_y = true;
         if (y_value < DEADZONE_LOW)
         {
-            // movimento para cima: decrementa
+            // Movimento para cima: decrementa
             switch (selection)
             {
             case 0:
@@ -222,7 +239,7 @@ void state_program_update()
         }
         else if (y_value > DEADZONE_HIGH)
         {
-            // movimento para baixo: incrementa
+            // Movimento para baixo: incrementa
             switch (selection)
             {
             case 0:
@@ -236,11 +253,12 @@ void state_program_update()
                 break;
             }
         }
-        sleep_ms(200); // debounce adicional
+        sleep_ms(200); // Debounce
     }
 
     display_update_program_values(alarm.hours, alarm.minutes, alarm.seconds, selection);
 
+    // Verificação dos botões
     if (!gpio_get(BUTTON_B))
     {
         alarm.total_seconds = (alarm.hours * 3600) + (alarm.minutes * 60) + alarm.seconds;
