@@ -60,16 +60,16 @@ void display_show_idle_screen()
     ssd1306_rect(&ssd, 0, 0, WIDTH, HEIGHT, true, false);
 
     // Mostra o título
-    ssd1306_draw_string(&ssd, "      ALARME   ", 8, 5);
+    ssd1306_draw_string(&ssd, "ALARME IDLE", 10, 5);
 
     // Desenha uma linha horizontal
     ssd1306_hline(&ssd, 0, WIDTH - 1, 15, true);
 
     // Mostra instruções
-    ssd1306_draw_string(&ssd, "Pressione A", 25, 20);
-    ssd1306_draw_string(&ssd, "Para", 45, 28);
-    ssd1306_draw_string(&ssd, "programar", 25, 38);
-    ssd1306_draw_string(&ssd, "o alarme", 25, 48);
+    ssd1306_draw_string(&ssd, "BEM VINDO!", 25, 20);
+    ssd1306_draw_string(&ssd, "Adicione um", 15, 33);
+    ssd1306_draw_string(&ssd, "Alarme", 35, 43);
+    ssd1306_draw_string(&ssd, "Press: A", 10, 55);
 
     // Atualiza o display
     ssd1306_send_data(&ssd);
@@ -98,7 +98,7 @@ void display_show_program_screen()
     ssd1306_draw_string(&ssd, "Segundos:", 5, 45);
 
     // Mostra instruções
-    ssd1306_draw_string(&ssd, "B INICIAR", 5, 55);
+    ssd1306_draw_string(&ssd, "B: Iniciar", 5, 55);
 
     // Inicializa com valores zerados
     display_update_program_values(0, 0, 0, 0);
@@ -173,7 +173,7 @@ void display_update_program_values(uint16_t hours, uint16_t minutes, uint16_t se
         break;
     }
 
-    // 6. Atualizar o display com o novo buffer
+    // Atualizar o display com o novo buffer
     ssd1306_send_data(&ssd);
 }
 
@@ -186,13 +186,13 @@ void display_show_countdown_screen()
     ssd1306_rect(&ssd, 0, 0, WIDTH, HEIGHT, true, false);
 
     // Mostra o título
-    ssd1306_draw_string(&ssd, "CONTAGEM REGRESSIVA", 8, 5);
+    ssd1306_draw_string(&ssd, "    TIMER    ", 8, 5);
 
     // Desenha uma linha horizontal
     ssd1306_hline(&ssd, 0, WIDTH - 1, 15, true);
 
     // Mostra instruções
-    ssd1306_draw_string(&ssd, "A:Cancelar", 5, 55);
+    ssd1306_draw_string(&ssd, "A: Cancelar", 5, 55);
 
     // Atualiza a matriz de LEDs
     display_update_led_matrix(PATTERN_CLOCK);
@@ -231,15 +231,14 @@ void display_show_alarm_screen()
     ssd1306_rect(&ssd, 0, 0, WIDTH, HEIGHT, true, false);
 
     // Mostra o título com destaque
-    ssd1306_draw_string(&ssd, "!!! ALARME !!!", 20, 5);
+    ssd1306_draw_string(&ssd, "!!! ALARME !!!", 10, 5);
 
     // Desenha uma linha horizontal
     ssd1306_hline(&ssd, 0, WIDTH - 1, 15, true);
 
     // Mostra a mensagem
-    ssd1306_draw_string(&ssd, "AA", 5, 25);
-    ssd1306_draw_string(&ssd, "TESTE", 10, 40);
-    ssd1306_draw_string(&ssd, "A confirmar", 30, 50);
+    ssd1306_draw_string(&ssd, "Botao A: Parar", 10, 35);
+
 
     // Atualiza o display
     ssd1306_send_data(&ssd);
