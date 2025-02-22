@@ -277,22 +277,26 @@ void ssd1306_draw_char(ssd1306_t *ssd, char c, uint8_t x, uint8_t y)
   uint16_t index = 0;
   if (c >= 'A' && c <= 'Z')
   {
-    index = (c - 'A' + 11) * 8; // Offset para maiúsculas
+    index = (c - 'A' + 11) * 8; // Letras maiúsculas: de A a Z, começando em 88
   }
   else if (c >= 'a' && c <= 'z')
   {
-    index = (c - 'a' + 37) * 8; // Offset para minúsculas
+    index = (c - 'a' + 37) * 8; // Letras minúsculas: de a a z, começando em 296
   }
   else if (c >= '0' && c <= '9')
   {
-    index = (c - '0' + 1) * 8; // Offset para dígitos
+    index = (c - '0' + 1) * 8; // Dígitos: '0' começa em índice 8, '9' termina em 87
   }
   else if (c == ':')
   {
-    index = 504; // O caractere ':' está armazenado a partir do byte 504
+    index = 504; // caractere ':'
+  }
+  else if (c == '!')
+  {
+    index = 512; // caractere '!'
   }
 
-  // Loop para desenhar os 8 bytes do caractere
+  // Desenha os 8 bytes do caractere
   for (uint8_t i = 0; i < 8; ++i)
   {
     uint8_t line = font[index + i];
