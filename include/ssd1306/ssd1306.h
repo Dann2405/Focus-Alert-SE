@@ -12,7 +12,8 @@
 #define HEIGHT 64
 
 // Comandos do display
-typedef enum {
+typedef enum
+{
   SET_CONTRAST = 0x81,
   SET_ENTIRE_ON = 0xA4,
   SET_NORM_INV = 0xA6,
@@ -33,7 +34,8 @@ typedef enum {
 } ssd1306_command_t;
 
 // Estrutura do display
-typedef struct {
+typedef struct
+{
   uint8_t width, height, pages, address;
   i2c_inst_t *i2c_port;
   bool external_vcc;
@@ -221,7 +223,6 @@ void ssd1306_circle(ssd1306_t *ssd, uint8_t x0, uint8_t y0, uint8_t radius, bool
   }
 }
 
-
 // Desenha uma linha no display
 void ssd1306_line(ssd1306_t *ssd, uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, bool value)
 {
@@ -273,26 +274,34 @@ void ssd1306_vline(ssd1306_t *ssd, uint8_t x, uint8_t y0, uint8_t y1, bool value
 // Desenha um caractere no display
 void ssd1306_draw_char(ssd1306_t *ssd, char c, uint8_t x, uint8_t y)
 {
-    uint16_t index = 0;
-    if (c >= 'A' && c <= 'Z') {
-        index = (c - 'A' + 11) * 8;  // Offset para maiúsculas
-    }
-    else if (c >= 'a' && c <= 'z') {
-        index = (c - 'a' + 37) * 8;  // Offset para minúsculas
-    }
-    else if (c >= '0' && c <= '9') {
-        index = (c - '0' + 1) * 8;   // Offset para dígitos
-    }
-    
-    // Loop para desenhar os 8 bytes do caractere
-    for (uint8_t i = 0; i < 8; ++i) {
-        uint8_t line = font[index + i];
-        for (uint8_t j = 0; j < 8; ++j) {
-            ssd1306_pixel(ssd, x + i, y + j, line & (1 << j));
-        }
-    }
-}
+  uint16_t index = 0;
+  if (c >= 'A' && c <= 'Z')
+  {
+    index = (c - 'A' + 11) * 8; // Offset para maiúsculas
+  }
+  else if (c >= 'a' && c <= 'z')
+  {
+    index = (c - 'a' + 37) * 8; // Offset para minúsculas
+  }
+  else if (c >= '0' && c <= '9')
+  {
+    index = (c - '0' + 1) * 8; // Offset para dígitos
+  }
+  else if (c == ':')
+  {
+    index = 504; // O caractere ':' está armazenado a partir do byte 504
+  }
 
+  // Loop para desenhar os 8 bytes do caractere
+  for (uint8_t i = 0; i < 8; ++i)
+  {
+    uint8_t line = font[index + i];
+    for (uint8_t j = 0; j < 8; ++j)
+    {
+      ssd1306_pixel(ssd, x + i, y + j, line & (1 << j));
+    }
+  }
+}
 
 // Função para desenhar uma string
 void ssd1306_draw_string(ssd1306_t *ssd, const char *str, uint8_t x, uint8_t y)
