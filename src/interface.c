@@ -34,40 +34,18 @@ void display_show_idle_screen()
     ssd1306_rect(&ssd, 0, 0, WIDTH, HEIGHT, true, false);
 
     // Mostra o título
-    ssd1306_draw_string(&ssd, "ALARME IDLE", 10, 5);
+    ssd1306_draw_string(&ssd, "FOCUS ALERT", 20, 5);
 
     // Desenha uma linha horizontal
     ssd1306_hline(&ssd, 0, WIDTH - 1, 15, true);
 
     // Mostra instruções
     ssd1306_draw_string(&ssd, "BEM VINDO!", 25, 20);
-    ssd1306_draw_string(&ssd, "Adicione um", 15, 33);
-    ssd1306_draw_string(&ssd, "Alarme", 35, 43);
-    ssd1306_draw_string(&ssd, "Press: A", 10, 55);
+    ssd1306_draw_string(&ssd, "A: Programar", 5, 40);
+    ssd1306_draw_string(&ssd, "Alarme", 36, 50);
 
     // Atualiza o display
     ssd1306_send_data(&ssd);
-}
-
-// Mostra a tela de programação
-void display_show_program_screen()
-{
-    ssd1306_fill(&ssd, false);
-
-    // Desenha uma borda
-    ssd1306_rect(&ssd, 0, 0, WIDTH, HEIGHT, true, false);
-
-    // Mostra o título
-    ssd1306_draw_string(&ssd, "A PROGRAMAR", 10, 5);
-
-    // Desenha uma linha horizontal
-    ssd1306_hline(&ssd, 0, WIDTH - 1, 15, true);
-
-    // Mostra instruções
-    ssd1306_draw_string(&ssd, "B: Iniciar", 5, 55);
-
-    // Inicializa com valores zerados
-    display_update_program_values(0, 0, 0, 0);
 }
 
 // Atualiza os valores na tela de programação
@@ -80,7 +58,7 @@ void display_update_program_values(uint16_t hours, uint16_t minutes, uint16_t se
     ssd1306_rect(&ssd, 0, 0, WIDTH, HEIGHT, true, false);
 
     // Mostra o título
-    ssd1306_draw_string(&ssd, "A PROGRAMAR", 10, 5);
+    ssd1306_draw_string(&ssd, "PROGRAMANDO", 20, 5);
 
     // Desenha uma linha horizontal
     ssd1306_hline(&ssd, 0, WIDTH - 1, 15, true);
@@ -153,13 +131,14 @@ void display_show_countdown_screen()
     ssd1306_rect(&ssd, 0, 0, WIDTH, HEIGHT, true, false);
 
     // Mostra o título
-    ssd1306_draw_string(&ssd, "    TIMER    ", 8, 5);
+    ssd1306_draw_string(&ssd, "TEMPO RESTANTE", 8, 5);
 
     // Desenha uma linha horizontal
     ssd1306_hline(&ssd, 0, WIDTH - 1, 15, true);
 
     // Mostra instruções
-    ssd1306_draw_string(&ssd, "A: Cancelar", 5, 55);
+    ssd1306_draw_string(&ssd, "A: Cancelar", 5, 46);
+    ssd1306_draw_string(&ssd, "ALARM", 35, 55);
 }
 
 // Atualiza o tempo na tela de contagem regressiva
