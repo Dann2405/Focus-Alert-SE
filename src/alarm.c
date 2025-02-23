@@ -176,8 +176,8 @@ void state_program_update()
     static bool joystick_triggered_x = false;
 
     // Ddefinição da zona morta com histerese
-    const uint16_t DEADZONE_LOW = 1900;
-    const uint16_t DEADZONE_HIGH = 2100;
+    const uint16_t DEADZONE_LOW = 1000;
+    const uint16_t DEADZONE_HIGH = 3500;
 
     if (absolute_time_diff_us(last_update, get_absolute_time()) < 100000)
     {
