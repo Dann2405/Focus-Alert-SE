@@ -19,7 +19,6 @@ static const uint Buzzer_B = 10;
 // definição dos pinos do joystick
 static const uint VRX_PIN = 27;
 static const uint VRY_PIN = 26;
-static const uint SW_PIN = 22;
 
 // inicialização dos pinos leds
 static inline void leds_init()
@@ -57,12 +56,6 @@ static inline void joystick_init()
     // inicializa os pinos do joystick como adc
     adc_gpio_init(VRX_PIN);
     adc_gpio_init(VRY_PIN);
-
-    // inicializa o pino do botão do joystick
-    gpio_init(SW_PIN);
-    gpio_set_dir(SW_PIN, GPIO_IN);
-    gpio_pull_up(SW_PIN);
-
 }
 
 #endif // CONFIG_H

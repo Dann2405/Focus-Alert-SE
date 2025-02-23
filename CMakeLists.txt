@@ -58,13 +58,8 @@ target_include_directories(project PRIVATE
 
 # Add any user requested libraries
 target_link_libraries(project 
-        hardware_spi
         hardware_i2c
-        hardware_dma
-        hardware_pio
-        hardware_interp
         hardware_timer
-        hardware_watchdog
         hardware_clocks
         hardware_adc
         hardware_pwm
