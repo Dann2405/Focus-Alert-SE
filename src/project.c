@@ -13,7 +13,6 @@ int main() {
     // Inicializa os periféricos
     leds_init();
     buttons_init();
-    buzzer_init();
     joystick_init();
     
     // Inicializa o display OLED

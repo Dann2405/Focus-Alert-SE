@@ -334,22 +334,11 @@ void state_alarm_enter()
 
     // configura o pino do buzzer para SIO (saída simples)
     gpio_set_function(Buzzer_A, GPIO_FUNC_SIO);
+    gpio_set_dir(Buzzer_A, GPIO_OUT);
     gpio_put(Buzzer_A, 0); // Certifica que inicia desligado
 
-    // toca o alarme até que o botão A seja pressionado
-    // OBS: Essa abordagem é bloqueante: enquanto o alarme estiver tocando, o loop principal ficará parado.
-    while (gpio_get(BUTTON_A))
-    {
-        // gera uma frequência de aproximadamente 4000 Hz:
-        gpio_put(Buzzer_A, 1);
-        sleep_us(125);
-        gpio_put(Buzzer_A, 0);
-        sleep_us(125);
-    }
-
-    // quando o botão A é pressionado, encerra o alarme
-    alarm_reset();
-    sleep_ms(200); // debounce para evitar múltiplos disparos
+    // Configura o LED inicial
+    gpio_put(LED_RED, 0);
 }
 
 void state_alarm_update()
@@ -357,19 +346,29 @@ void state_alarm_update()
     static absolute_time_t last_led_update = {0};
     static bool led_state = false;
 
-    // pisca o led vermelho a cada 500ms
-    if (absolute_time_diff_us(last_led_update, get_absolute_time()) >= 500000)
+    static absolute_time_t last_sound_update = {0};
+    static bool buzzer_state = false;
+
+    // Gera som do buzzer de forma não bloqueante:
+    if (absolute_time_diff_us(last_sound_update, get_absolute_time()) >= 125)
+    {
+        last_sound_update = get_absolute_time();
+        buzzer_state = !buzzer_state;
+        gpio_put(Buzzer_A, buzzer_state);
+    }
+
+    // pisca o led vermelho a cada 250ms (mais rápido para melhor feedback visual)
+    if (absolute_time_diff_us(last_led_update, get_absolute_time()) >= 250000)
     {
         last_led_update = get_absolute_time();
         led_state = !led_state;
-        gpio_put(LED_RED, led_state);
+        gpio_put(LED_RED, led_state); // LED = HIGH = aceso, LOW = apagado
     }
 
     // verifica se o botão a foi pressionado para confirmar o alarme
     if (!gpio_get(BUTTON_A))
     {
         // desliga o buzzer
-        gpio_set_function(Buzzer_A, GPIO_FUNC_SIO);
         gpio_put(Buzzer_A, 0);
 
         // desliga o led vermelho
@@ -384,7 +383,6 @@ void state_alarm_update()
 void state_alarm_exit()
 {
     // desliga o buzzer
-    gpio_set_function(Buzzer_A, GPIO_FUNC_SIO);
     gpio_put(Buzzer_A, 0);
 
     // desliga o led vermelho
