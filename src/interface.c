@@ -73,9 +73,6 @@ void display_show_idle_screen()
 
     // Atualiza o display
     ssd1306_send_data(&ssd);
-
-    // Atualiza a matriz de LEDs
-    display_update_led_matrix(PATTERN_IDLE);
 }
 
 // Mostra a tela de programação
@@ -97,9 +94,6 @@ void display_show_program_screen()
 
     // Inicializa com valores zerados
     display_update_program_values(0, 0, 0, 0);
-
-    // Atualiza a matriz de LEDs
-    display_update_led_matrix(PATTERN_IDLE);
 }
 
 // Atualiza os valores na tela de programação
@@ -192,9 +186,6 @@ void display_show_countdown_screen()
 
     // Mostra instruções
     ssd1306_draw_string(&ssd, "A: Cancelar", 5, 55);
-
-    // Atualiza a matriz de LEDs
-    display_update_led_matrix(PATTERN_CLOCK);
 }
 
 // Atualiza o tempo na tela de contagem regressiva
@@ -217,7 +208,6 @@ void display_update_countdown(uint16_t hours, uint16_t minutes, uint16_t seconds
     {
         last_animation_update = get_absolute_time();
         animation_frame = (animation_frame + 1) % 4;
-        display_update_led_matrix(PATTERN_CLOCK);
     }
 }
 
@@ -240,66 +230,4 @@ void display_show_alarm_screen()
 
     // Atualiza o display
     ssd1306_send_data(&ssd);
-
-    // Atualiza a matriz de LEDs
-    display_update_led_matrix(PATTERN_ALARM);
-}
-
-// Atualiza a matriz de LEDs 5x5
-void display_update_led_matrix(uint8_t pattern)
-{
-    PIO pio = pio0;
-    uint sm = 0;
-    uint offset = pio_add_program(pio, &ws2818b_program);
-    ws2818b_program_init(pio, sm, offset, MATRIX_LED, 800000);
-
-    // Buffer para os LEDs (5x5 = 25 LEDs)
-    uint32_t pixels[25];
-    memset(pixels, 0, sizeof(pixels));
-
-    // Preenche o buffer de acordo com o padrão selecionado
-    for (int y = 0; y < 5; y++)
-    {
-        for (int x = 0; x < 5; x++)
-        {
-            int idx = y * 5 + x;
-
-            switch (pattern)
-            {
-            case PATTERN_IDLE:
-                pixels[idx] = led_pattern_idle[y][x] ? 0x00001F00 : 0; // Verde se ativo
-                break;
-
-            case PATTERN_CLOCK:
-                // Animação simples do relógio
-                if (led_pattern_clock[y][x])
-                {
-                    // Varia com base no frame de animação
-                    if ((x + y) % 4 == animation_frame)
-                    {
-                        pixels[idx] = 0x00101080; // Azul claro
-                    }
-                    else
-                    {
-                        pixels[idx] = 0x00000080; // Azul escuro
-                    }
-                }
-                break;
-
-            case PATTERN_ALARM:
-                // Padrão piscante de alarme
-                if (led_pattern_alarm[y][x])
-                {
-                    pixels[idx] = 0x001F0000; // Vermelho
-                }
-                break;
-            }
-        }
-    }
-
-    // Envia os dados para a matriz de LEDs
-    for (int i = 0; i < 25; i++)
-    {
-        pio_sm_put_blocking(pio, sm, pixels[i]);
-    }
 }
