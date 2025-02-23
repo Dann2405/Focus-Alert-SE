@@ -54,18 +54,6 @@ static inline void buttons_init()
     gpio_pull_up(BUTTON_B);
 }
 
-// inicialização dos pinos do buzzer
-static inline void buzzer_init()
-{
-    // inicializa os pinos dos buzzers
-    gpio_init(Buzzer_A);
-    gpio_init(Buzzer_B);
-
-    // define os pinos como saida
-    gpio_set_dir(Buzzer_A, GPIO_OUT);
-    gpio_set_dir(Buzzer_B, GPIO_OUT);
-}
-
 // inicialização do joystick
 static inline void joystick_init()
 {
