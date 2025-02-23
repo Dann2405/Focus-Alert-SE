@@ -332,30 +332,36 @@ void state_alarm_enter()
     // exibe a tela de alarme
     display_show_alarm_screen();
 
-    // configura o pino do buzzer para SIO (saída simples)
-    gpio_set_function(Buzzer_A, GPIO_FUNC_SIO);
-    gpio_set_dir(Buzzer_A, GPIO_OUT);
-    gpio_put(Buzzer_A, 0); // Certifica que inicia desligado
+    // configura os pinos dos buzzers para PWM
+    gpio_set_function(Buzzer_A, GPIO_FUNC_PWM);
+    gpio_set_function(Buzzer_B, GPIO_FUNC_PWM);
 
-    // Configura o LED inicial
-    gpio_put(LED_RED, 0);
+    // Obtenha o número do slice para cada buzzer
+    uint slice_a = pwm_gpio_to_slice_num(Buzzer_A);
+    uint slice_b = pwm_gpio_to_slice_num(Buzzer_B);
+
+    // gera aproximandamente 4000 hz
+    uint32_t wrap_val = 1000;
+    float divider = 31.25f;       // valor ajustado
+    uint32_t duty = wrap_val / 2; // Duty cycle de 50%
+
+    // Configura o PWM para Buzzer_A
+    pwm_set_wrap(slice_a, wrap_val);
+    pwm_set_clkdiv(slice_a, divider);
+    pwm_set_chan_level(slice_a, PWM_CHAN_A, duty);
+    pwm_set_enabled(slice_a, true);
+
+    // Configura o PWM para Buzzer_B
+    pwm_set_wrap(slice_b, wrap_val);
+    pwm_set_clkdiv(slice_b, divider);
+    pwm_set_chan_level(slice_b, PWM_CHAN_A, duty);
+    pwm_set_enabled(slice_b, true);
 }
 
 void state_alarm_update()
 {
     static absolute_time_t last_led_update = {0};
     static bool led_state = false;
-
-    static absolute_time_t last_sound_update = {0};
-    static bool buzzer_state = false;
-
-    // Gera som do buzzer de forma não bloqueante:
-    if (absolute_time_diff_us(last_sound_update, get_absolute_time()) >= 125)
-    {
-        last_sound_update = get_absolute_time();
-        buzzer_state = !buzzer_state;
-        gpio_put(Buzzer_A, buzzer_state);
-    }
 
     // pisca o led vermelho a cada 250ms (mais rápido para melhor feedback visual)
     if (absolute_time_diff_us(last_led_update, get_absolute_time()) >= 250000)
@@ -368,14 +374,19 @@ void state_alarm_update()
     // verifica se o botão a foi pressionado para confirmar o alarme
     if (!gpio_get(BUTTON_A))
     {
-        // desliga o buzzer
+        // Desliga o PWM alterando a função dos pinos para SIO e colocando em 0
+        gpio_set_function(Buzzer_A, GPIO_FUNC_SIO);
         gpio_put(Buzzer_A, 0);
+
+        gpio_set_function(Buzzer_B, GPIO_FUNC_SIO);
+        gpio_put(Buzzer_B, 0);
 
         // desliga o led vermelho
         gpio_put(LED_RED, 0);
 
         // volta para o estado ocioso
         alarm_reset();
+
         sleep_ms(200); // debounce
     }
 }
