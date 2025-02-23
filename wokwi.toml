@@ -1,6 +1,0 @@
-[wokwi]
-
-version = 1
-firmware = 'build/project.uf2'
-elf = 'build/project.elf'
-gdbServerPort=3333
