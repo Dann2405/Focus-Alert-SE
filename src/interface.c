@@ -6,32 +6,6 @@
 
 ssd1306_t ssd; // Estrutura do display
 
-// Padrões para a matriz de LEDs 5x5
-const uint8_t led_pattern_idle[5][5] = {
-    {0, 0, 0, 0, 0},
-    {0, 1, 1, 1, 0},
-    {0, 1, 0, 1, 0},
-    {0, 1, 1, 1, 0},
-    {0, 0, 0, 0, 0}};
-
-const uint8_t led_pattern_clock[5][5] = {
-    {0, 1, 1, 1, 0},
-    {1, 0, 0, 0, 1},
-    {1, 0, 1, 0, 1},
-    {1, 0, 0, 0, 1},
-    {0, 1, 1, 1, 0}};
-
-const uint8_t led_pattern_alarm[5][5] = {
-    {1, 0, 1, 0, 1},
-    {0, 1, 0, 1, 0},
-    {1, 0, 1, 0, 1},
-    {0, 1, 0, 1, 0},
-    {1, 0, 1, 0, 1}};
-
-// Variáveis para animação
-static uint8_t animation_frame = 0;
-static absolute_time_t last_animation_update = {0};
-
 // Inicializa o display SSD1306
 void displayssd1306_init()
 {
@@ -202,13 +176,6 @@ void display_update_countdown(uint16_t hours, uint16_t minutes, uint16_t seconds
 
     // Atualiza o display
     ssd1306_send_data(&ssd);
-
-    // Atualiza a animação do relógio na matriz de LEDs
-    if (absolute_time_diff_us(last_animation_update, get_absolute_time()) >= 1000000)
-    {
-        last_animation_update = get_absolute_time();
-        animation_frame = (animation_frame + 1) % 4;
-    }
 }
 
 // Mostra a tela de alarme

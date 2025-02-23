@@ -16,9 +16,6 @@ static const uint BUTTON_B = 6;
 static const uint Buzzer_A = 21;
 static const uint Buzzer_B = 10;
 
-// definição do pino da matrix 5x5
-static const uint MATRIX_LED = 7;
-
 // definição dos pinos do joystick
 static const uint VRX_PIN = 27;
 static const uint VRY_PIN = 26;
