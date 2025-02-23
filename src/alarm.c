@@ -165,7 +165,6 @@ void state_program_enter()
     alarm.hours = 0;
     alarm.minutes = 0;
     alarm.seconds = 0;
-    display_show_program_screen();
 }
 
 void state_program_update()
