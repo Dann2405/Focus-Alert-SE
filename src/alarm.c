@@ -171,12 +171,17 @@ void state_program_update()
 {
     static uint8_t selection = 0; // 0=horas, 1=minutos, 2=segundos
     static absolute_time_t last_update = {0};
+    static absolute_time_t last_continuous_update = {0};
     static bool joystick_triggered_y = false;
     static bool joystick_triggered_x = false;
+    static bool continuous_mode_y = false;
+    static uint8_t continuous_direction_y = 0; // 0=nenhum, 1=cima, 2=baixo
 
     // Ddefinição da zona morta com histerese
     const uint16_t DEADZONE_LOW = 1000;
     const uint16_t DEADZONE_HIGH = 3500;
+    const uint32_t CONTINUOUS_DELAY_US = 15000; // 15 milisegundos em microssegundos
+    const uint32_t INITIAL_DELAY_US = 50000;    // 50 milisegundos antes de iniciar modo contínuo
 
     if (absolute_time_diff_us(last_update, get_absolute_time()) < 100000)
     {
@@ -215,44 +220,104 @@ void state_program_update()
     // Controle de valor com eixo Y
     if (y_value >= DEADZONE_LOW && y_value <= DEADZONE_HIGH)
     {
+        // Joystick em posição neutra, desativa modo contínuo
         joystick_triggered_y = false;
+        continuous_mode_y = false;
+        continuous_direction_y = 0;
     }
-    else if (!joystick_triggered_y)
+    else
     {
-        joystick_triggered_y = true;
-        if (y_value < DEADZONE_LOW)
+        if (!joystick_triggered_y)
         {
-            // Movimento para cima: decrementa
-            switch (selection)
+            // Primeira detecção do movimento
+            joystick_triggered_y = true;
+            last_continuous_update = get_absolute_time();
+            
+            // Determina a direção
+            if (y_value < DEADZONE_LOW)
             {
-            case 0:
-                alarm.hours = (alarm.hours + 23) % 24;
-                break;
-            case 1:
-                alarm.minutes = (alarm.minutes + 59) % 60;
-                break;
-            case 2:
-                alarm.seconds = (alarm.seconds + 59) % 60;
-                break;
+                continuous_direction_y = 1; // Cima
+                // Movimento para cima: decrementa
+                switch (selection)
+                {
+                case 0:
+                    alarm.hours = (alarm.hours + 23) % 24;
+                    break;
+                case 1:
+                    alarm.minutes = (alarm.minutes + 59) % 60;
+                    break;
+                case 2:
+                    alarm.seconds = (alarm.seconds + 59) % 60;
+                    break;
+                }
+            }
+            else if (y_value > DEADZONE_HIGH)
+            {
+                continuous_direction_y = 2; // Baixo
+                // Movimento para baixo: incrementa
+                switch (selection)
+                {
+                case 0:
+                    alarm.hours = (alarm.hours + 1) % 24;
+                    break;
+                case 1:
+                    alarm.minutes = (alarm.minutes + 1) % 60;
+                    break;
+                case 2:
+                    alarm.seconds = (alarm.seconds + 1) % 60;
+                    break;
+                }
             }
         }
-        else if (y_value > DEADZONE_HIGH)
+        else if (absolute_time_diff_us(last_continuous_update, get_absolute_time()) > INITIAL_DELAY_US)
         {
-            // Movimento para baixo: incrementa
-            switch (selection)
+            // Tempo suficiente passou desde a primeira detecção ou último incremento
+            // Verifica se já está em modo contínuo ou deve iniciar
+            if (!continuous_mode_y)
             {
-            case 0:
-                alarm.hours = (alarm.hours + 1) % 24;
-                break;
-            case 1:
-                alarm.minutes = (alarm.minutes + 1) % 60;
-                break;
-            case 2:
-                alarm.seconds = (alarm.seconds + 1) % 60;
-                break;
+                continuous_mode_y = true;
+                last_continuous_update = get_absolute_time();
+            }
+            else if (absolute_time_diff_us(last_continuous_update, get_absolute_time()) > CONTINUOUS_DELAY_US)
+            {
+                // Atualiza o timestamp para o próximo incremento
+                last_continuous_update = get_absolute_time();
+                
+                // Aplica a mudança baseada na direção salva
+                if (continuous_direction_y == 1) // Cima
+                {
+                    // Movimento para cima: decrementa
+                    switch (selection)
+                    {
+                    case 0:
+                        alarm.hours = (alarm.hours + 23) % 24;
+                        break;
+                    case 1:
+                        alarm.minutes = (alarm.minutes + 59) % 60;
+                        break;
+                    case 2:
+                        alarm.seconds = (alarm.seconds + 59) % 60;
+                        break;
+                    }
+                }
+                else if (continuous_direction_y == 2) // Baixo
+                {
+                    // Movimento para baixo: incrementa
+                    switch (selection)
+                    {
+                    case 0:
+                        alarm.hours = (alarm.hours + 1) % 24;
+                        break;
+                    case 1:
+                        alarm.minutes = (alarm.minutes + 1) % 60;
+                        break;
+                    case 2:
+                        alarm.seconds = (alarm.seconds + 1) % 60;
+                        break;
+                    }
+                }
             }
         }
-        sleep_ms(200); // Debounce
     }
 
     display_update_program_values(alarm.hours, alarm.minutes, alarm.seconds, selection);
