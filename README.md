@@ -109,10 +109,6 @@ Utilize a interface de compilação do SDK do Raspberry Pi integrado ao VS Code 
 
 O **Focus Alert SE** demonstra a capacidade dos sistemas embarcados modernos de integrar múltiplas funcionalidades – desde a leitura de sensores (ADC para o joystick) até o controle por PWM dos buzzers – em um único dispositivo de baixo custo e alta eficiência. Este projeto consolida os conhecimentos adquiridos na capacitação e apresenta uma solução inovadora e prática para gerenciamento de tempo e lembretes de medicação, com foco na simplicidade e robustez da interface.
 
-## Vídeo de Demonstração
-
-Click [AQUI](https://drive.google.com/file/d/1MmiYwVj4-TfJyEAQABbOM3DRPEnRp2ho/view?usp=sharing) para acessar o video de demonstração.
-
 ## Licença
 
 Este projeto é licenciado sob os termos da [MIT License](https://opensource.org/license/mit).
