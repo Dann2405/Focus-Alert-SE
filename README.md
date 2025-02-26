@@ -3,7 +3,7 @@
 
 ## Descrição do Projeto
 
-O **Focus Alert SE** é um sistema embarcado inovador desenvolvido com a placa BitDogLab (baseada no Raspberry Pi Pico W) que atua como um alarme programável para lembretes de medicação e também como uma ferramenta de gerenciamento de tempo – por exemplo, aplicando a técnica Pomodoro para evitar distrações. Projetado para auxiliar idosos e pessoas que precisam manter uma rotina bem definida, o Focus Alert SE oferece uma interface física intuitiva e limpa, utilizando um display OLED SSD1306 para exibição de informações e dois buzzers para emissão de alarmes sonoros intensos.
+O **Focus Alert SE** é um sistema embarcado inovador desenvolvido com a placa BitDogLab (baseada no Raspberry Pi Pico W) que atua como um alarme programável para lembretes de medicação e também como uma ferramenta de gerenciamento de tempod. Projetado para auxiliar idosos e pessoas com alzheimer que precisam manter uma rotina bem definida, garantindo que a administração de medicamentos e a gestão do tempo ocorram de forma simples e confiável. O Focus Alert SE oferece uma interface física intuitiva e limpa, utilizando um display OLED SSD1306 para exibição de informações e dois buzzers para emissão de alarmes sonoros intensos.
 
 ## Objetivos
 
@@ -11,7 +11,7 @@ O **Focus Alert SE** é um sistema embarcado inovador desenvolvido com a placa B
   Fornecer lembretes de medicação de forma confiável, utilizando buzzers que geram um som forte e claro, aliado a um display que exibe a configuração do alarme.
 
 - **Gestão de Tempo e Produtividade:**  
-  Permitir o uso do dispositivo como timer Pomodoro, auxiliando o usuário a organizar sua rotina e reduzir distrações, promovendo foco e eficiência.
+  Permitir o uso do dispositivo como, por exemplo, um timer Pomodoro, auxiliando o usuário a organizar sua rotina e reduzir distrações, promovendo foco e eficiência.
 
 - **Integração de Múltiplas Funcionalidades:**  
   Demonstrar o potencial do RP2040 integrando a leitura do ADC (para o joystick) e controle via PWM (para os buzzers), tudo em um sistema compacto e de baixo custo.
@@ -89,15 +89,15 @@ Utilize a interface de compilação do SDK do Raspberry Pi integrado ao VS Code 
 - **Upload do Firmware:**  
   Faça o upload do arquivo `.uf2` gerado para a placa utilizando o método de sua preferência (arrastando o arquivo para a unidade BOOTSEL ou usando o Picotool).
 - **Operação:**  
-  Configure o alarme ou o timer Pomodoro por meio do joystick e dos botões. O display mostrará as configurações, e, na hora de disparar o alarme, os buzzers emitirão um som forte (aproximadamente 4000 Hz, conforme configurado) enquanto o LED indica que o alarme esta sendo acionado.
+  Configure o alarme por meio do joystick e dos botões. O display mostrará as configurações, e, na hora de disparar o alarme, os buzzers emitirão um som forte (aproximadamente 4000 Hz, conforme configurado) enquanto o LED indica que o alarme esta sendo acionado.
 
 ## Funcionamento do Projeto
 
 1. **Configuração e Programação:**  
-   O usuário define os horários (ou a duração do Pomodoro) utilizando o joystick – o eixo X para selecionar entre horas, minutos e segundos e o eixo Y para ajustar os valores. O display OLED apresenta as configurações de forma clara, destacando o campo selecionado.
+   O usuário define os horários/duração do alarme utilizando o joystick – o eixo X para selecionar entre horas, minutos e segundos e o eixo Y para ajustar os valores. O display OLED apresenta as configurações de forma clara, destacando o campo selecionado.
 
 2. **Contagem Regressiva / Timer:**  
-   Após a configuração, o sistema inicia a contagem regressiva ou o timer Pomodoro, atualizando o display com o tempo restante e mantendo uma interface visual dinâmica.
+   Após a configuração, o sistema inicia a contagem regressiva, atualizando o display com o tempo restante e mantendo uma interface visual dinâmica.
 
 3. **Ativação do Alarme:**  
    Quando o tempo se esgota, o estado ALARM é ativado. Os buzzers (controlados por PWM) geram um som forte e consistente (aproximadamente 4000 Hz), enquanto o LED fornecem feedback visual. O alarme pode ser interrompido pelo botão A.
@@ -111,7 +111,7 @@ O **Focus Alert SE** demonstra a capacidade dos sistemas embarcados modernos de 
 
 ## Vídeo de Demonstração
 
-[Link para o vídeo no Google Drive a ser adicionado posteriormente]
+Click [AQUI](https://drive.google.com/file/d/1MmiYwVj4-TfJyEAQABbOM3DRPEnRp2ho/view?usp=sharing) para acessar o video de demonstração.
 
 ## Licença
 
